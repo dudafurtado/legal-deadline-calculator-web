@@ -2,7 +2,7 @@
 
 import { DatePicker } from "@/components/DatePicker";
 import Menu from "@/components/Menu";
-import { SelectInput } from "@/components/SelectInput";
+import { SelectInput } from "@/components/SelectState";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -41,7 +41,7 @@ export default function Home() {
     <article className="m-6">
       <Menu />
       <main className="flex flex-col items-center content-center">
-        <h1 className="m-6">Calcule aqui o seu prazo:</h1>
+        <h1 className="text-2xl font-bold">Calcule aqui o seu prazo:</h1>
         <Form {...form}>
           <form className="space-y-8">
             <FormField
@@ -63,7 +63,7 @@ export default function Home() {
               name="username"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Prazo</FormLabel>
+                  <FormLabel>Tipo de Prazo</FormLabel>
                   <FormControl>
                     <SelectInput />
                   </FormControl>
