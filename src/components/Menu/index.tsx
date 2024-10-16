@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sheet,
   SheetContent,
@@ -18,12 +20,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useRouter } from "next/navigation";
 
 export default function Menu() {
+  const router = useRouter();
+
   return (
     <Sheet key={"left"}>
       <SheetTrigger>
-        <Image src={MenuIcon} width={40} height={40} alt={""} />
+        <Image src={MenuIcon} width={30} height={30} alt={""} />
       </SheetTrigger>
       <SheetContent side={"left"}>
         <SheetHeader>
@@ -32,27 +37,39 @@ export default function Menu() {
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
                 <AccordionTrigger>Cálculos</AccordionTrigger>
-                <AccordionContent className="flex gap-2">
-                  <Image src={Calculator} width={20} height={20} alt={""} />
+                <AccordionContent
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => router.push("/calculo/individual")}
+                >
                   Prazos Individuais
+                  <Image src={Calculator} width={30} height={30} alt={""} />
                 </AccordionContent>
-                <AccordionContent className="flex gap-2">
-                  <Image src={SheetIcon} width={20} height={20} alt={""} />
+                <AccordionContent
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => router.push("/calculo/lote")}
+                >
                   Prazos em Lote
+                  <Image src={SheetIcon} width={30} height={30} alt={""} />
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
                 <AccordionTrigger>Prazos</AccordionTrigger>
-                <AccordionContent className="flex gap-2">
-                  <Image src={DeadlineIcon} width={20} height={20} alt={""} />
-                  Histórico de Prazos Feitos Anteriormente.
+                <AccordionContent
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => router.push("/prazos")}
+                >
+                  Histórico.
+                  <Image src={DeadlineIcon} width={30} height={30} alt={""} />
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-3">
                 <AccordionTrigger>Feriados</AccordionTrigger>
-                <AccordionContent className="flex gap-2">
-                  <Image src={HolidayIcon} width={20} height={20} alt={""} />
-                  Listagem e Criação de Feriados.
+                <AccordionContent
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => router.push("/feriados")}
+                >
+                  Listagem e Criação.
+                  <Image src={HolidayIcon} width={30} height={30} alt={""} />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
