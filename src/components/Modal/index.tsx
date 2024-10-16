@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,8 +12,40 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { createHolidaySchema } from "@/validations/holidaySchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { SelectInput } from "../SelectState";
+import { DatePicker } from "../DatePicker";
+import { createHoliday } from "@/services/holidayRequests";
+import { format } from "date-fns";
 
 export function Modal() {
+  const form = useForm<z.infer<typeof createHolidaySchema>>({
+    resolver: zodResolver(createHolidaySchema),
+    defaultValues: {
+      name: "",
+      date: "1999-12-31",
+      state_id: 1,
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof createHolidaySchema>) {
+    await createHoliday(values);
+
+    return form.reset();
+  }
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -19,16 +53,58 @@ export function Modal() {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Novo Feriado</AlertDialogTitle>
+          <AlertDialogTitle>Criar Novo Feriado</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            Insira nome, data e estado para criar um novo feriado.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="flex justify-between">
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Criar</AlertDialogAction>
-        </AlertDialogFooter>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Natal" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Data</FormLabel>
+                  <FormControl>
+                    <DatePicker />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="state_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estado</FormLabel>
+                  <FormControl>
+                    <SelectInput />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <AlertDialogFooter className="flex justify-between">
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button type="submit">Criar</Button>
+            </AlertDialogFooter>
+          </form>
+        </Form>
       </AlertDialogContent>
     </AlertDialog>
   );
