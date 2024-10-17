@@ -41,7 +41,7 @@ export function SelectInput() {
 
   return (
     <Select>
-      <SelectTrigger className="w-[280px]">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Selecione um estado" />
       </SelectTrigger>
       <SelectContent>

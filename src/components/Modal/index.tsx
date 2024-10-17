@@ -2,7 +2,6 @@
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -28,9 +27,11 @@ import { z } from "zod";
 import { SelectInput } from "../SelectState";
 import { DatePicker } from "../DatePicker";
 import { createHoliday } from "@/services/holidayRequests";
-import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 export function Modal() {
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof createHolidaySchema>>({
     resolver: zodResolver(createHolidaySchema),
     defaultValues: {
@@ -42,7 +43,9 @@ export function Modal() {
 
   async function onSubmit(values: z.infer<typeof createHolidaySchema>) {
     await createHoliday(values);
-
+    toast({
+      description: "Feriado Criado com Sucessso.",
+    });
     return form.reset();
   }
 
@@ -67,7 +70,10 @@ export function Modal() {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input placeholder="Natal" {...field} />
+                    <Input
+                      placeholder="Digite o nome de um feriado"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -99,8 +105,8 @@ export function Modal() {
                 </FormItem>
               )}
             />
-            <AlertDialogFooter className="flex justify-between">
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Fechar</AlertDialogCancel>
               <Button type="submit">Criar</Button>
             </AlertDialogFooter>
           </form>

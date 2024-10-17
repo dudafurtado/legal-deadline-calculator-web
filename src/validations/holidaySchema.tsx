@@ -5,3 +5,8 @@ export const createHolidaySchema = z.object({
   date: z.string(),
   state_id: z.number(),
 });
+
+export const searchHolidaySchema = z.object({
+  search: z.string().optional(),
+  state_id: z.number().optional(),
+});

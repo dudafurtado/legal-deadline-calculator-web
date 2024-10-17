@@ -1,8 +1,8 @@
 export interface Holiday {
   id: number;
-  date: Date;
+  date: string;
   name: string;
-  state_id: number;
+  state: string;
   created_at: Date;
   updated_at: Date;
   deleted_at: Date | null;

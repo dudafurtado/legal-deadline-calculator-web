@@ -1,3 +1,4 @@
+import { searchHolidaySchema } from "@/validations/holidaySchema";
 import api from "./apiConnection";
 import { z } from "zod";
 
@@ -10,11 +11,31 @@ export async function createHoliday(payload: unknown) {
   }
 }
 
-export async function listHolidays() {
+export async function listHolidays(
+  queryList?: z.infer<typeof searchHolidaySchema>
+) {
   try {
-    const response = await api.get("/holidays");
+    let query = "";
+
+    if (queryList) {
+      const { search, state_id } = queryList;
+      query = "?";
+
+      if (search) {
+        query = `search=${search}`;
+      }
+
+      if (state_id) {
+        query = `state_id=${state_id}`;
+      }
+    }
+
+    console.log(query);
+
+    const response = await api.get(`/holidays${query}`);
     return response.data;
   } catch (error) {
+    console.log(error);
     throw new Error("Erro ao listar feriados.");
   }
 }
