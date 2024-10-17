@@ -24,10 +24,11 @@ import { createHolidaySchema } from "@/validations/holidaySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { SelectInput } from "../SelectState";
+import { SelectState } from "../SelectState";
 import { DatePicker } from "../DatePicker";
 import { createHoliday } from "@/services/holidayRequests";
 import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
 
 export function Modal() {
   const { toast } = useToast();
@@ -36,13 +37,22 @@ export function Modal() {
     resolver: zodResolver(createHolidaySchema),
     defaultValues: {
       name: "",
-      date: "1999-12-31",
-      state_id: 1,
+      date: undefined,
+      state_id: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof createHolidaySchema>) {
-    await createHoliday(values);
+    const formattedDate = values.date
+      ? format(new Date(values.date), "yyyy-MM-dd")
+      : undefined;
+    const finalValues = {
+      ...values,
+      date: formattedDate,
+      state_id: Number(values.state_id),
+    };
+
+    await createHoliday(finalValues);
     toast({
       description: "Feriado Criado com Sucessso.",
     });
@@ -70,10 +80,7 @@ export function Modal() {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Digite o nome de um feriado"
-                      {...field}
-                    />
+                    <Input placeholder="Digite o nome do feriado" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -86,7 +93,10 @@ export function Modal() {
                 <FormItem className="flex flex-col">
                   <FormLabel>Data</FormLabel>
                   <FormControl>
-                    <DatePicker />
+                    <DatePicker
+                      value={field.value ? new Date(field.value) : undefined}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -99,7 +109,10 @@ export function Modal() {
                 <FormItem>
                   <FormLabel>Estado</FormLabel>
                   <FormControl>
-                    <SelectInput />
+                    <SelectState
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

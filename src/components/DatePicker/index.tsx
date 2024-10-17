@@ -1,9 +1,8 @@
 "use client";
 
-import * as React from "react";
+import { useState, useEffect } from "react";
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -20,8 +19,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function DatePicker() {
-  const [date, setDate] = React.useState<Date>();
+export function DatePicker({
+  value,
+  onChange,
+}: {
+  value: Date | undefined;
+  onChange: (date: Date | undefined) => void;
+}) {
+  const [date, setDate] = useState<Date>();
+
+  useEffect(() => {
+    setDate(value);
+  }, [value]);
 
   return (
     <Popover>
@@ -34,7 +43,7 @@ export function DatePicker() {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Escolha uma data</span>}
+          {date ? format(date, "dd-MM-yyyy") : <span>Escolha uma data</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="flex w-auto flex-col space-y-2 p-2">
@@ -54,7 +63,14 @@ export function DatePicker() {
           </SelectContent>
         </Select>
         <div className="rounded-md border">
-          <Calendar mode="single" selected={date} onSelect={setDate} />
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(newDate) => {
+              setDate(newDate);
+              onChange(newDate);
+            }}
+          />
         </div>
       </PopoverContent>
     </Popover>

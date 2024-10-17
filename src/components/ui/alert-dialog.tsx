@@ -65,7 +65,7 @@ const AlertDialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col-reverse lg:justify-between sm:flex-row sm:justify-end sm:space-x-2",
+      "flex flex-col-reverse lg:justify-between md:justify-between sm:flex-row sm:justify-end sm:space-x-2",
       className
     )}
     {...props}
@@ -117,7 +117,7 @@ const AlertDialogCancel = React.forwardRef<
   <AlertDialogPrimitive.Cancel
     ref={ref}
     className={cn(
-      buttonVariants({ variant: "destructive" }),
+      buttonVariants({ variant: "outline" }),
       "mt-2 sm:mt-0",
       className
     )}

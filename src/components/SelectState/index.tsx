@@ -14,13 +14,18 @@ import { listStates } from "@/services/statesRequests";
 import { useEffect, useState } from "react";
 import { State } from "@/interfaces/interfaces";
 
-export function SelectInput() {
+export function SelectState({
+  value,
+  onChange,
+}: {
+  value: string | undefined;
+  onChange: (value: string) => void;
+}) {
   const [states, setStates] = useState<State[]>([]);
 
   useEffect(() => {
     async function loadStates() {
       const res = await listStates();
-
       setStates(res);
     }
 
@@ -30,9 +35,11 @@ export function SelectInput() {
   const groupedStates = states.reduce(
     (acc: { [key: string]: State[] }, state) => {
       const { region } = state;
+
       if (!acc[region]) {
         acc[region] = [];
       }
+
       acc[region].push(state);
       return acc;
     },
@@ -40,7 +47,7 @@ export function SelectInput() {
   );
 
   return (
-    <Select>
+    <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Selecione um estado" />
       </SelectTrigger>
@@ -49,7 +56,7 @@ export function SelectInput() {
           <SelectGroup key={region}>
             <SelectLabel>{region}</SelectLabel>
             {statesInRegion.map((state) => (
-              <SelectItem key={state.id} value={state.uf}>
+              <SelectItem key={state.id} value={String(state.id)}>
                 {state.name} ({state.uf})
               </SelectItem>
             ))}
