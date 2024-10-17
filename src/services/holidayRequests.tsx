@@ -39,3 +39,11 @@ export async function listHolidays(
     throw new Error("Erro ao listar feriados.");
   }
 }
+
+export async function deleteHoliday(id: number) {
+  try {
+    await api.delete(`/holidays/${id}`);
+  } catch (error) {
+    throw new Error("Erro ao criar feriado.");
+  }
+}

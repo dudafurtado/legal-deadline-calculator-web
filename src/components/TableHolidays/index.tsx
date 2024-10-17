@@ -10,14 +10,34 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Holiday } from "@/interfaces/interfaces";
-import { listHolidays } from "@/services/holidayRequests";
+import { deleteHoliday, listHolidays } from "@/services/holidayRequests";
 import { useEffect, useState } from "react";
 import TrashIcon from "@/assets/trash-icon.png";
 import EditIcon from "@/assets/edit-icon.png";
 import Image from "next/image";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 export function TableHolidays() {
+  const { toast } = useToast();
   const [holidays, setHolidays] = useState<Holiday[]>([]);
+
+  async function handleDeleteHoliday(holidayId: number) {
+    await deleteHoliday(holidayId);
+    toast({
+      description: "Feriado Deletado com Sucessso.",
+    });
+  }
 
   useEffect(() => {
     async function loadHolidays() {
@@ -51,7 +71,33 @@ export function TableHolidays() {
               <Image src={EditIcon} alt={""} width={20} height={20} />
             </TableCell>
             <TableCell className="flex justify-end">
-              <Image src={TrashIcon} alt={""} width={20} height={20} />
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <Image src={TrashIcon} alt={""} width={20} height={20} />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Deletar Feriado{" "}
+                      <span className="text-red-600">{holiday.name}</span>
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Você tem certeza de que quer excluir do banco de dados o
+                      feriado de nome{" "}
+                      <span className="text-red-600">{holiday.name}</span>?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Não</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-red-600"
+                      onClick={() => handleDeleteHoliday(holiday.id)}
+                    >
+                      Sim
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </TableCell>
           </TableRow>
         ))}
