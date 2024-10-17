@@ -45,3 +45,6 @@
 `npm install @tanstack/react-table`
 `npx shadcn@latest add dropdown-menu`
 `npx shadcn@latest add checkbox`
+
+**Toast**
+`npx shadcn@latest add toast`
