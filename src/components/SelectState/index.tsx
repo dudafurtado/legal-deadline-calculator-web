@@ -11,8 +11,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { listStates } from "@/services/statesRequests";
+import { listCities } from "@/services/cityRequests";
 import { useEffect, useState } from "react";
-import { State } from "@/interfaces/interfaces";
+import { State } from "@/interfaces/entities";
+import useMyContext from "@/hooks/useMyContext";
 
 export function SelectState({
   value,
@@ -22,15 +24,7 @@ export function SelectState({
   onChange: (value: string) => void;
 }) {
   const [states, setStates] = useState<State[]>([]);
-
-  useEffect(() => {
-    async function loadStates() {
-      const res = await listStates();
-      setStates(res);
-    }
-
-    loadStates();
-  }, []);
+  const { setCities } = useMyContext();
 
   const groupedStates = states.reduce(
     (acc: { [key: string]: State[] }, state) => {
@@ -46,8 +40,24 @@ export function SelectState({
     {}
   );
 
+  const handleStateChange = async (stateId: string) => {
+    onChange(stateId);
+    const citiesRes = await listCities(Number(stateId));
+
+    setCities(citiesRes);
+  };
+
+  useEffect(() => {
+    async function loadStates() {
+      const res = await listStates();
+      setStates(res);
+    }
+
+    loadStates();
+  }, []);
+
   return (
-    <Select value={value} onValueChange={onChange}>
+    <Select defaultValue={value} onValueChange={handleStateChange}>
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Selecione um estado" />
       </SelectTrigger>

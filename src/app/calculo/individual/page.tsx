@@ -2,7 +2,9 @@
 
 import { DatePicker } from "@/components/DatePicker";
 import Menu from "@/components/Menu";
-import { SelectInput } from "@/components/SelectState";
+import { SelectCity } from "@/components/SelectCity";
+import { SelectState } from "@/components/SelectState";
+import { SelectTerm } from "@/components/SelectTerm";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,8 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-
+import useMyContext from "@/hooks/useMyContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -26,6 +27,8 @@ const formSchema = z.object({
 });
 
 export default function IndividualCalculator() {
+  const { cities } = useMyContext();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,7 +50,7 @@ export default function IndividualCalculator() {
         <Form {...form}>
           <form className="space-y-8">
             <FormField
-              // control={form.control}
+              control={form.control}
               name="username"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
@@ -55,8 +58,10 @@ export default function IndividualCalculator() {
                     Data de início
                   </FormLabel>
                   <FormControl>
-                    {/* <Input placeholder="22/07/2030" {...field} /> */}
-                    <DatePicker />
+                    <DatePicker
+                      value={field.value ? new Date(field.value) : undefined}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormDescription>
                     A partir de qual data o cálculo deve ser feito?
@@ -66,13 +71,13 @@ export default function IndividualCalculator() {
               )}
             />
             <FormField
-              // control={form.control}
+              control={form.control}
               name="username"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel className="font-semibold">Tipo de Prazo</FormLabel>
                   <FormControl>
-                    <SelectInput />
+                    <SelectTerm value={field.value} onChange={field.onChange} />
                   </FormControl>
                   <FormDescription>
                     Quantos dias devem ser contados?
@@ -82,13 +87,16 @@ export default function IndividualCalculator() {
               )}
             />
             <FormField
-              // control={form.control}
+              control={form.control}
               name="username"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel className="font-semibold">Estado</FormLabel>
                   <FormControl>
-                    <SelectInput />
+                    <SelectState
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormDescription>
                     De qual estado devem ser verificados os feriados?
@@ -97,22 +105,28 @@ export default function IndividualCalculator() {
                 </FormItem>
               )}
             />
-            <FormField
-              // control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel className="font-semibold">Cidade</FormLabel>
-                  <FormControl>
-                    <SelectInput />
-                  </FormControl>
-                  <FormDescription>
-                    Devemos verificar também feriados municipais?
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {cities.length !== 0 && (
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="font-semibold">Cidade</FormLabel>
+                    <FormControl>
+                      <SelectCity
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Devemos verificar também feriados municipais?
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
             <Button type="submit" className="w-full">
               Calcular
             </Button>
