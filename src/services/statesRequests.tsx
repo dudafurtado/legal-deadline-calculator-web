@@ -5,6 +5,7 @@ export async function listStates() {
     const response = await api.get("/states");
     return response.data;
   } catch (error) {
-    throw new Error("Erro ao listar feriados.");
+    console.log(error);
+    throw new Error("Erro ao listar estados.");
   }
 }
