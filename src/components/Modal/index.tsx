@@ -29,9 +29,11 @@ import { DatePicker } from "../DatePicker";
 import { createHoliday } from "@/services/holidayRequests";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import useMyContext from "@/hooks/useMyContext";
 
 export function Modal() {
   const { toast } = useToast();
+  const { reloadHolidayList, setReloadHolidayList } = useMyContext();
 
   const form = useForm<z.infer<typeof createHolidaySchema>>({
     resolver: zodResolver(createHolidaySchema),
@@ -56,6 +58,7 @@ export function Modal() {
     toast({
       description: "Feriado Criado com Sucessso.",
     });
+    setReloadHolidayList(!reloadHolidayList);
     return form.reset();
   }
 

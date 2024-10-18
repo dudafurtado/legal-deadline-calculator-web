@@ -3,7 +3,7 @@
 import Menu from "@/components/Menu";
 import { Modal } from "@/components/Modal";
 import { PaginationTable } from "@/components/Pagination";
-import { SelectInput } from "@/components/SelectState";
+import { SelectState } from "@/components/SelectState";
 import { TableHolidays } from "@/components/TableHolidays";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,31 +13,42 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  FormLabel,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { searchHolidaySchema } from "@/validations/holidaySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { listHolidays } from "@/services/holidayRequests";
+import { listHolidaysWithQuery } from "@/services/holidayRequests";
+import useMyContext from "@/hooks/useMyContext";
 
 export default function Holidays() {
   const { toast } = useToast();
+  const { reloadHolidayList, setReloadHolidayList, setHolidays } =
+    useMyContext();
 
   const form = useForm<z.infer<typeof searchHolidaySchema>>({
     resolver: zodResolver(searchHolidaySchema),
     defaultValues: {
       search: "",
-      state_id: 1,
+      state_id: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof searchHolidaySchema>) {
-    await listHolidays(values);
+    const res = await listHolidaysWithQuery(values);
     toast({
       description: "Pesquisa na Listagem de Feriados Efetuada com Sucesso.",
     });
-    return form.reset();
+    setHolidays(res);
+    return;
+  }
+
+  function handleCleanForm() {
+    form.reset();
+    setReloadHolidayList(!reloadHolidayList);
+    return;
   }
 
   return (
@@ -57,6 +68,8 @@ export default function Holidays() {
           conteúdo do feriado ou deletar clique nos botões da tabela.
         </p>
 
+        <h2 className="self-start text-xl font-bold">Pesquisa do Feriado</h2>
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -67,10 +80,11 @@ export default function Holidays() {
               name="search"
               render={({ field }) => (
                 <FormItem className="w-full">
+                  <FormLabel>Feriado</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
-                      placeholder="Escreva o nome de um feriado"
+                      placeholder="Escreva o nome do feriado"
                       {...field}
                     />
                   </FormControl>
@@ -84,15 +98,27 @@ export default function Holidays() {
               name="state_id"
               render={({ field }) => (
                 <FormItem className="w-full">
+                  <FormLabel>Estado</FormLabel>
                   <FormControl>
-                    <SelectInput />
+                    <SelectState
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type="submit" className="w-4/12">
+            <Button
+              type="button"
+              className="w-4/12 self-end"
+              onClick={() => handleCleanForm()}
+            >
+              Limpar Pesquisa
+            </Button>
+
+            <Button type="submit" className="w-4/12 self-end">
               Pesquisar
             </Button>
           </form>

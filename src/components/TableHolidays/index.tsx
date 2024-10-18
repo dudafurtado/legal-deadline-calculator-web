@@ -9,9 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Holiday } from "@/interfaces/interfaces";
 import { deleteHoliday, listHolidays } from "@/services/holidayRequests";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import TrashIcon from "@/assets/trash-icon.png";
 import EditIcon from "@/assets/edit-icon.png";
 import Image from "next/image";
@@ -27,16 +26,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import useMyContext from "@/hooks/useMyContext";
 
 export function TableHolidays() {
   const { toast } = useToast();
-  const [holidays, setHolidays] = useState<Holiday[]>([]);
+  const { reloadHolidayList, setReloadHolidayList, holidays, setHolidays } =
+    useMyContext();
 
   async function handleDeleteHoliday(holidayId: number) {
     await deleteHoliday(holidayId);
     toast({
       description: "Feriado Deletado com Sucessso.",
     });
+    setReloadHolidayList(!reloadHolidayList);
+    return;
   }
 
   useEffect(() => {
@@ -47,7 +50,8 @@ export function TableHolidays() {
     }
 
     loadHolidays();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reloadHolidayList]);
 
   return (
     <Table>

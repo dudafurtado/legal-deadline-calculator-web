@@ -8,5 +8,5 @@ export const createHolidaySchema = z.object({
 
 export const searchHolidaySchema = z.object({
   search: z.string().optional(),
-  state_id: z.number().optional(),
+  state_id: z.string().optional(),
 });
