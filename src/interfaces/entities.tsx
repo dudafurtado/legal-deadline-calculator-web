@@ -14,3 +14,16 @@ export interface State {
   uf: string;
   region: string;
 }
+
+export interface Cities {
+  id: number;
+  name: string;
+  code: string;
+  state_id: number;
+}
+
+export interface Term {
+  id: number;
+  name: string;
+  days: number;
+}
